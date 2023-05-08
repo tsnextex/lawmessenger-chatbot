@@ -388,7 +388,7 @@ export const ChatInput = ({
         </a>
         .{' '} */}
         {t(
-          "AI responses are not a substitute for legal advise. You should always consult with a lawyer in your jurisdiction.",
+          "AI responses are not a substitute for legal advise. You should always consult with a lawyer in your jurisdiction...",
         )}
       </div>
     </div>

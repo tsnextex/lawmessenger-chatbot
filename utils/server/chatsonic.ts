@@ -43,32 +43,54 @@ export const OpenAIStream = async (
   const prompt_array = messages.slice(Math.max(messages.length - 12, 1));
 
   if (model.id == 'chatsonic') {
-    const prompt = messages.slice(-1)[0];
 
-    const url = 'https://api.writesonic.com/v2/business/content/chatsonic?engine=premium';
+    // const url = 'https://api.writesonic.com/v2/business/content/chatsonic?engine=premium';
+    // const options = {
+    //   method: 'POST',
+    //   headers: {
+    //     accept: 'application/json',
+    //     'content-type': 'application/json',
+    //     'X-API-KEY': 'b2f6b6b8-4f44-4249-a34a-845328cd992b'
+    //   },
+    //   body: JSON.stringify({
+    //     enable_google_results: 'true',
+    //     enable_memory: false,
+    //     input_text: 'hi',
+    //     stream: true,
+    //   })
+    // };
+
+    // const res = await fetch(url, options);
+    // console.log(res.json())
+
+    const http = require('https');
     const options = {
       method: 'POST',
+      hostname: 'api.writesonic.com',
+      port: null,
+      path: '/v2/business/content/chatsonic?engine=premium',
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',
         'X-API-KEY': 'b2f6b6b8-4f44-4249-a34a-845328cd992b'
-      },
-      body: JSON.stringify({
-        enable_google_results: 'true',
-        enable_memory: false,
-        input_text: prompt.content,
-        stream: true,
-      })
+      }
     };
 
-    const res = fetch(url, options)
-      .then(res => res.json())
-      .then(json => {
-        return json.message;
-      })
-      .catch(err => console.error('error:' + err));
+    const req = http.request(options, function (res) {
+      const chunks: any[] | readonly Uint8Array[] = [];
 
-    return res;
+      res.on('data', function (chunk) {
+        chunks.push(chunk);
+      });
+
+      res.on('end', function () {
+        const body = Buffer.concat(chunks);
+        console.log(body.toString());
+      });
+    });
+
+    req.write(JSON.stringify({ enable_google_results: 'true', enable_memory: false, input_text: 'hi' }));
+    req.end();
 
   } else {
     const res = await fetch(url, {
