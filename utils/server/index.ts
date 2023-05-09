@@ -64,7 +64,10 @@ export const OpenAIStream = async (
     const res = fetch(url, options)
       .then(res => res.json())
       .then(json => {
-        return json.message;
+        let response = json.message;
+        // response = response.replace(/</g, '&lt;');
+        // response = response.replace(/>/g, '&gt;');
+        return response;
       })
       .catch(err => console.error('error:' + err));
 

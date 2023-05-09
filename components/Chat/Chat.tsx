@@ -131,13 +131,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           return;
         }
         const data = response.body;
-        console.log('response...', data)
         if (!data) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
           return;
         }
-        console.log('plugin....', plugin)
 
         if (!plugin) {
           if (updatedConversation.messages.length === 1) {
@@ -164,7 +162,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             const { value, done: doneReading } = await reader.read();
             done = doneReading;
             const chunkValue = decoder.decode(value);
-            console.log(chunkValue)
 
             text += chunkValue;
             if (isFirst) {
@@ -228,7 +225,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             messages: updatedMessages,
           };
           homeDispatch({
-            field: 'selectedConversation', 
+            field: 'selectedConversation',
             value: updateConversation,
           });
           saveConversation(updatedConversation);
@@ -422,6 +419,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       key={index}
                       message={message}
                       messageIndex={index}
+                      model={selectedConversation?.model.id}
                       onEdit={(editedMessage) => {
                         setCurrentMessage(editedMessage);
                         // discard edited message and the ones that come after then resend
