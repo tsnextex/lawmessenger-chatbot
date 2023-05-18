@@ -40,7 +40,7 @@ export const OpenAIStream = async (
   // if (OPENAI_API_TYPE === 'azure') {
   //   url = `${OPENAI_API_HOST}/openai/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`;
   // }
-  const prompt_array = messages.slice(Math.max(messages.length - 3, 1));
+  const prompt_array = messages.slice(Math.max(messages.length - 3, 0));
 
   if (model.id == 'chatsonic') {
     const prompt = messages.slice(-1)[0];
