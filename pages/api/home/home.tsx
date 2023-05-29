@@ -56,6 +56,7 @@ const Home = ({
   const { getModels } = useApiService();
   const { getModelsError } = useErrorService();
   const [initialRender, setInitialRender] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
@@ -231,6 +232,9 @@ const Home = ({
     if (window.innerWidth < 640) {
       dispatch({ field: 'showChatbar', value: false });
     }
+    if (selectedConversation) {
+      setLoading(true);
+    }
   }, [selectedConversation]);
 
   useEffect(() => {
@@ -348,49 +352,55 @@ const Home = ({
   ]);
 
   return (
-    <HomeContext.Provider
-      value={{
-        ...contextValue,
-        handleNewConversation,
-        handleCreateFolder,
-        handleDeleteFolder,
-        handleUpdateFolder,
-        handleSelectConversation,
-        handleUpdateConversation,
-      }}
-    >
-      <Head>
-        <title>LawMessenger Chatbot</title>
-        <meta name="description" content="ChatGPT but better." />
-        <meta
-          name="viewport"
-          content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      {selectedConversation && (
-        <main
-          className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
+    <>
+      {loading ?
+        <HomeContext.Provider
+          value={{
+            ...contextValue,
+            handleNewConversation,
+            handleCreateFolder,
+            handleDeleteFolder,
+            handleUpdateFolder,
+            handleSelectConversation,
+            handleUpdateConversation,
+          }}
         >
-          <div className="fixed top-0 w-full sm:hidden">
-            <Navbar
-              selectedConversation={selectedConversation}
-              onNewConversation={handleNewConversation}
+          <Head>
+            <title>LawMessenger Chatbot</title>
+            <meta name="description" content="ChatGPT but better." />
+            <meta
+              name="viewport"
+              content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
             />
-          </div>
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
+          {selectedConversation && (
+            <main
+              className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
+            >
+              <div className="fixed top-0 w-full sm:hidden">
+                <Navbar
+                  selectedConversation={selectedConversation}
+                  onNewConversation={handleNewConversation}
+                />
+              </div>
 
-          <div className="flex h-full w-full pt-[48px] sm:pt-0">
-            <Chatbar />
+              <div className="flex h-full w-full pt-[48px] sm:pt-0">
+                <Chatbar />
 
-            <div className="flex flex-1">
-              <Chat stopConversationRef={stopConversationRef} />
-            </div>
+                <div className="flex flex-1">
+                  <Chat stopConversationRef={stopConversationRef} />
+                </div>
 
-            {/* <Promptbar /> */}
-          </div>
-        </main>
-      )}
-    </HomeContext.Provider>
+                {/* <Promptbar /> */}
+              </div>
+            </main>
+          )}
+        </HomeContext.Provider>
+        : <div className='flex justify-center items-center w-full h-screen bg-white'>
+          <img id="social_loader" src="https://lawmessenger.com/chat/public/mobile/images/loading.gif" />
+        </div>}
+    </>
   );
 };
 export default Home;
