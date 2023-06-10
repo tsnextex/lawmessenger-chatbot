@@ -17,6 +17,8 @@ import {
 } from 'react';
 
 import { useTranslation } from 'next-i18next';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 import { Message } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
@@ -53,6 +55,8 @@ export const ChatInput = ({
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
+  const router = useRouter();
+
   const [content, setContent] = useState<string>();
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState(false);
@@ -62,6 +66,7 @@ export const ChatInput = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showPluginSelect, setShowPluginSelect] = useState(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
+  const [enabled, setEnabled] = useState<boolean>(false);
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
 
@@ -74,12 +79,10 @@ export const ChatInput = ({
     const maxLength = selectedConversation?.model.maxLength;
 
     if (maxLength && value.length > maxLength) {
-      alert(
-        t(
-          `Message limit is {{maxLength}} characters. You have entered {{valueLength}} characters.`,
-          { maxLength, valueLength: value.length },
-        ),
-      );
+      toast.error(t(
+        `Message limit is {{maxLength}} characters. You have entered {{valueLength}} characters.`,
+        { maxLength: maxLength, valueLength: value.length },
+      ));
       return;
     }
 
@@ -88,12 +91,43 @@ export const ChatInput = ({
   };
 
   const handleSend = () => {
+
     if (messageIsStreaming) {
       return;
     }
 
+    if (!enabled) {
+      toast((t) => (
+        <div className="chatbot-dialog" >
+          <div className="chatbot-dialog-container">
+            <div className="chatbot-dialog-header">
+              <button className="button button--quiet" >
+                Alert
+              </button>
+              <button id="btn-chatbot-alert-close" className="button button--quiet" onClick={() => toast.dismiss(t.id)}>
+                X
+              </button>
+            </div>
+            <div className="chatbot-settings-name-wrapper">
+              <p id="chatbot-plans_alert_text" >
+                This feature must be included in your <a href="https://lawmessenger.com/plans/ultra.php" target="_blank">plan</a> and <a href="https://lawmessenger.com/chat/my_chatbot_home.php" target="_blank">enabled</a> in order to be activated.
+              </p>
+            </div>
+          </div>
+        </div>
+      ), {
+        duration: 9000,
+        position: 'top-center',
+        style: {
+          background: 'transparent',
+          boxShadow: 'none'
+        },
+      });
+      return;
+    }
+
     if (!content) {
-      alert(t('Please enter a message'));
+      toast.error(t('Please enter a message'));
       return;
     }
 
@@ -223,6 +257,30 @@ export const ChatInput = ({
     }
   };
 
+  // get userid from url and fetch user information
+  const onGetUserInfo = useCallback(async (userid: string) => {
+    try {
+      const convert_userid = decode(userid);
+      const response = await fetch("https://lawmessenger.com/chatbot/get_position.php?id=" + convert_userid);
+      const data = await response.json();
+
+      if (data.chatbot_ultra && data.ultra_chatbot) {
+        setEnabled(true);
+      } else {
+        setEnabled(false);
+      }
+    } catch (error) {
+      setEnabled(false);
+    }
+
+  }, [router])
+
+  function decode(str:string) {
+    return str.replace(/.{3}/g, function(c:any) {
+        return String.fromCharCode(c);
+    });
+  }
+
   useEffect(() => {
     if (promptListRef.current) {
       promptListRef.current.scrollTop = activePromptIndex * 30;
@@ -237,6 +295,14 @@ export const ChatInput = ({
         }`;
     }
   }, [content]);
+
+  useEffect(() => {
+    if (router && router.query) {
+      if (router.query.id) {
+        onGetUserInfo(router.query.id.toString())
+      }
+    }
+  }, [router])
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -318,8 +384,8 @@ export const ChatInput = ({
               bottom: `${textareaRef?.current?.scrollHeight}px`,
               maxHeight: '400px',
               overflow: `${textareaRef.current && textareaRef.current.scrollHeight > 400
-                  ? 'auto'
-                  : 'hidden'
+                ? 'auto'
+                : 'hidden'
                 }`,
             }}
             placeholder={

@@ -66,3 +66,109 @@ pre:has(div.codeblock) {
         opacity: 0;
     }
 }
+
+#chatbot-alert-container {
+    /* position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0; */
+    overflow: hidden;
+    touch-action: manipulation;
+    display: block;
+    z-index: 999999;
+    height: 100vh;
+    display: none;
+}
+
+.chatbot-dialog-mask {
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    background: 0 0;
+    border: none;
+    line-height: normal;
+    user-select: none;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .2);
+}
+
+.chatbot-dialog {
+    padding: 0;
+    color: inherit;
+    border: none;
+    line-height: normal;
+    -moz-user-select: none;
+    user-select: none;
+    font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 400;
+    /* position: absolute; */
+    /* top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); */
+    margin: 0;
+    overflow: hidden;
+    /* min-width: 270px; */
+    /* min-height: 100px; */
+    box-shadow: 0px 5px 19px -5px !important;
+    z-index: 20001;
+    border-radius: 15px;
+    /* top: 42%; */
+    /* min-width: 320px; */
+}
+
+.chatbot-dialog-container {
+    height: inherit;
+    min-height: inherit;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #f4f4f4;
+    -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
+    color: #1f1f21;
+    border-radius: 15px;
+    background-color: #fff;
+}
+
+.chatbot-dialog-header {
+    background-color: #1E5494;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 16px;
+}
+
+.button--quiet {
+    font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 400;
+    user-select: none;
+    font-size: 17px;
+    line-height: 32px;
+    box-shadow: none;
+    background: 0 0;
+    color: white;
+    border: none;
+}
+
+.chatbot-settings-name-wrapper {
+    text-align: center;
+    clear: both;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#chatbot-plans_alert_text {
+    margin: 30px 15px;
+    font-size: 16px;
+    white-space: initial;
+    line-height: 1.8;
+}
+
+#chatbot-plans_alert_text a {
+    color: #1E5494;
+    font-weight: 700;
+}
